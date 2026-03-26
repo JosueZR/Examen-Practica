@@ -1,0 +1,210 @@
+/* public/css/estilos.css - ¡Estilo Pokédex Activado! */
+
+/* Importamos fuentes de Google: 'Press Start 2P' (pixelada retro) y 'Quicksand' (limpia para inputs) */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Quicksand:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* Fuente limpia por defecto */
+    font-family: 'Quicksand', sans-serif;
+}
+
+body {
+    /* Fondo que recuerda a un cielo con nubes/campo de batalla */
+    background: linear-gradient(135deg, #f05053 0%, #a02022 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* El contenedor principal imita la carcasa de la Pokédex */
+.login-container {
+    background-color: #dc0a2d; /* Rojo intenso Pokédex */
+    padding: 40px;
+    border-radius: 15px;
+    /* Borde grueso y oscuro metálico */
+    border: 8px solid #333333; 
+    /* Sombra pesada para efecto 3D retro */
+    box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.2); 
+    width: 95%;
+    max-width: 420px;
+    position: relative;
+    overflow: hidden; /* Para las luces decorativas */
+}
+
+/* Decoración: Luces de la Pokédex (esquinas superiores) */
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 25px;
+    height: 25px;
+    background-color: #3dc061; /* Verde activo */
+    border-radius: 50%;
+    border: 4px solid #fff;
+    box-shadow: 0 0 10px #3dc061;
+}
+
+.login-container::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 55px;
+    width: 15px;
+    height: 15px;
+    background-color: #ffcb05; /* Amarillo alerta */
+    border-radius: 50%;
+    border: 3px solid #fff;
+}
+
+h2 {
+    /* Fuente pixelada para el título */
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+    color: #ffcb05; /* Amarillo Pokémon */
+    text-shadow: 2px 2px #c94332; /* Sombra azul para resaltar */
+    font-size: 18px;
+    margin-bottom: 30px;
+    margin-top: 10px; /* Espacio para las luces */
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #ffffff;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+/* Inputs estilo pantalla de datos */
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    /* Fondo oscuro estilo pantalla */
+    background-color: #88c9a1; 
+    /* Borde pixelado */
+    border: 4px solid #333333;
+    border-radius: 5px;
+    color: #333333;
+    font-size: 16px;
+    outline: none;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+    /* Resaltar pantalla */
+    background-color: #a7e0ba; 
+    border-color: #2a75bb;
+}
+
+/* Botón ESTILO POKÉ BALL */
+.btn-entrar {
+    width: 100%;
+    padding: 15px;
+    margin-top: 10px;
+    
+    /* Fuente pixelada */
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    text-transform: uppercase;
+    
+    /* Colores del botón central de la Poké Ball */
+    background-color: #ffffff; 
+    color: #333333;
+    
+    /* Borde grueso y oscuro */
+    border: 6px solid #333333;
+    border-radius: 50px; /* Redondeado total */
+    
+    /* Sombra pesada */
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2); 
+    
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.btn-entrar:hover {
+    /* Al pasar el mouse, "vibra" y cambia a rojo Pokédex */
+    background-color: #dc0a2d;
+    color: white;
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+}
+
+.error-msg {
+    color: #f7e14d; /* Amarillo para el error */
+    background-color: rgba(0, 0, 0, 0.4); /* Fondo para leerlo mejor */
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 15px;
+}
+
+/* --- 2. Aplicamos los Pokémon al Fondo del Body --- */
+
+body {
+    /* Aseguramos que el body sea el contenedor de referencia */
+    position: relative; 
+    overflow: hidden; /* Evita que salgan barras de desplazamiento */
+}
+
+/* Aseguramos que tu Pokédex (login) esté por ENCIMA de los Pokémon del fondo */
+.login-container {
+    z-index: 10; /* Un número alto */
+    position: relative; /* Necesario para que z-index funcione */
+}
+
+/* --- 3. Creamos los Pokémon "Fantasma" --- */
+
+/* --- 3. Creamos los Pokémon "Fantasma" --- */
+
+body::before {
+    content: ''; 
+    position: absolute;
+    background-image: url('../images/pokemon1.gif'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    
+    /* ¡Aquí aumentamos el tamaño al doble! */
+    width: 350px;  /* Antes estaba en 150px */
+    height: 350px; 
+    
+    /* Lo empujamos bien a la orilla izquierda para que no tape */
+    top: 20%; 
+    left: 2%; 
+    
+    opacity: 0.8; /* Un poco más de opacidad para que se vea claro */
+    z-index: 1; 
+    animation: floatPokemon 5s ease-in-out infinite;
+}
+
+body::after {
+    content: '';
+    position: absolute;
+    background-image: url('../images/pokemon2.gif'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    
+    /* ¡Tamaño gigante para el Pokémon de fuego! */
+    width: 450px;  /* Antes estaba en 200px */
+    height: 450px; 
+    
+    /* Lo pegamos a la esquina inferior derecha */
+    bottom: 5%; 
+    right: -10%; 
+    
+    opacity: 0.9; 
+    z-index: 1; 
+    animation: floatFirePokemon 6s ease-in-out infinite;
+}
