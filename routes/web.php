@@ -2,27 +2,30 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\LoginController; // Tu controlador hasta arriba
-
-Route::get('/', function () {
-    return redirect('/mi-login'); // Esto te mandará directo a tu formulario
-});
+use App\Http\Controllers\LoginController; 
+use App\Http\Controllers\PokemonController; // Lo usaremos pronto
 
 // ---------------------------------------------------
-// RUTAS DEL LOGIN
+// RUTAS DEL LOGIN (Se quedan igual)
 // ---------------------------------------------------
 Route::get('/mi-login', [LoginController::class, 'index'])->name('login');
 Route::post('/mi-login', [LoginController::class, 'authenticate']);
 
-// Tu propio Dashboard de prueba
-Route::get('/dashboard', function () {
-    return '¡Éxito! Estás dentro de tu propio sistema.';
+// ---------------------------------------------------
+// RUTA DEL HOME (Protegida)
+// ---------------------------------------------------
+// Esta es la ruta "/", pero el middleware obliga a pasar por el login primero.
+Route::get('/', function () {
+    return view('home'); 
 })->middleware('auth');
 
 // ---------------------------------------------------
 // RUTAS DEL PERFIL 
 // ---------------------------------------------------
 Route::middleware('auth')->group(function () {
+    Route::get('/pokemon', [PokemonController::class, 'index']);
+    Route::get('/pokemon/{name}', [PokemonController::class, 'show']);
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

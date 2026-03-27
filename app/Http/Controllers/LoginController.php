@@ -27,7 +27,7 @@ class LoginController extends Controller
             $request->session()->regenerate();
             
             // Si todo está bien, lo mandamos a una página de bienvenida
-            return redirect()->intended('dashboard'); 
+            return redirect()->intended('/'); 
         }
 
         // 3. Si se equivoca de contraseña o correo, lo regresamos con un error
