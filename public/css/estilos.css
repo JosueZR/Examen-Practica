@@ -156,7 +156,8 @@ input[type="password"]:focus {
 body {
     /* Aseguramos que el body sea el contenedor de referencia */
     position: relative; 
-    overflow: hidden; /* Evita que salgan barras de desplazamiento */
+    overflow-x: hidden; /* Solo bloqueamos el movimiento hacia los lados */
+    overflow-y: auto;   /* ¡Liberamos el movimiento hacia arriba y abajo! */
 }
 
 /* Aseguramos que tu Pokédex (login) esté por ENCIMA de los Pokémon del fondo */
@@ -322,4 +323,65 @@ h1, .display-4, .display-5 {
 .btn-poke:hover {
     background-color: #ffcb05; /* Se pinta de amarillo */
     color: #333333;
+}
+
+/* --- Estilos para la Pokebola y la Animación de Lanzamiento --- */
+
+/* Contenedor invisible para la pokebola, centrado sobre el botón */
+.pokeball-animate-container {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999; /* Por encima de todo */
+    pointer-events: none; /* No interfiere con los clics */
+}
+
+/* Estilo básico de la pokebola sprite */
+.pokeball-sprite {
+    width: 50px;
+    height: 50px;
+    background-image: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/pokeball.png'); /* Sprite oficial */
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0; /* Empieza invisible */
+}
+
+/* Clase que activa la animación con JavaScript */
+.pokeball-throwing {
+    display: block; /* Se hace visible */
+}
+
+.pokeball-throwing .pokeball-sprite {
+    /* Combinamos las animaciones de movimiento (lanzamiento) y giro */
+    animation: 
+        throwArc 1.5s ease-out forwards, /* Movimiento en arco */
+        spinBall 0.5s linear infinite;    /* Giro continuo */
+}
+
+/* Animación 1: Movimiento en Arco y Desvanecimiento */
+@keyframes throwArc {
+    0% {
+        transform: translate(0, 100px) scale(0.5); /* Empieza abajo y pequeña */
+        opacity: 0;
+    }
+    20% {
+        opacity: 1; /* Se hace visible rápido */
+        transform: translate(0, -50px) scale(1.2); /* Sube y se agranda (pico del arco) */
+    }
+    80% {
+        opacity: 1;
+        transform: translate(0, 50px) scale(1); /* Baja hacia el objetivo */
+    }
+    100% {
+        transform: translate(0, 80px) scale(0.2); /* Se hace diminuta al "entrar" */
+        opacity: 0; /* Desaparece */
+    }
+}
+
+/* Animación 2: Giro Continuo */
+@keyframes spinBall {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }

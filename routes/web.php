@@ -28,6 +28,17 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/pokemon', [PokemonController::class, 'index']);
     Route::get('/pokemon/{name}', [PokemonController::class, 'show']);
+    Route::get('/about', function () {
+        return view('about');
+    });
+    // Ruta para ver el detalle de un Pokémon guardado en la base de datos
+    Route::get('/mi-equipo/{id}', [PokemonController::class, 'showLocal']);
+
+    // Rutas para la base de datos local (Offline)
+    Route::post('/pokemon/guardar', [PokemonController::class, 'guardarLocal']);
+    Route::get('/mi-equipo', [PokemonController::class, 'verEquipo']);
+    Route::get('/mi-equipo/{id}', [PokemonController::class, 'showLocal']);
+    Route::delete('/mi-equipo/{id}', [PokemonController::class, 'eliminarLocal']);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

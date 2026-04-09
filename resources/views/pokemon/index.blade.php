@@ -32,17 +32,25 @@
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
             @forelse($pokemons as $pokemon)
-                @php $pokeName = strtolower($pokemon['name']); @endphp
+                @php 
+                    $pokeName = strtolower($pokemon['name']); 
+                    
+                    // Magia: Extraemos el ID del Pokémon desde su URL para conseguir su foto oficial
+                    $urlParts = explode('/', rtrim($pokemon['url'], '/'));
+                    $pokeId = end($urlParts);
+                    $imagenOficial = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/{$pokeId}.png";
+                @endphp
                 
                 <div class="col">
                     <div class="card h-100 text-center poke-card">
-                        <div class="p-4 d-flex justify-content-center align-items-center" style="height: 150px;">
-                            <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/{{ $pokeName }}.gif" 
-                                 alt="{{ $pokeName }}" style="max-height: 80px; object-fit: contain;">
+                        <div class="p-4 d-flex justify-content-center align-items-center border-bottom border-dark" style="height: 180px; background: radial-gradient(circle, #f8f9fa 0%, #e9ecef 100%);">
+                            <img src="{{ $imagenOficial }}" 
+                                 alt="{{ $pokeName }}" 
+                                 class="img-fluid drop-shadow" style="max-height: 120px; transition: transform 0.3s;">
                         </div>
                         
                         <div class="card-body bg-light rounded-bottom d-flex flex-column justify-content-between">
-                            <h5 class="card-title text-capitalize fw-bold mb-4 font-pixel" style="font-size: 14px;">{{ $pokeName }}</h5>
+                            <h5 class="card-title text-capitalize fw-bold mb-4 font-pixel text-dark" style="font-size: 14px;">{{ $pokeName }}</h5>
                             
                             <a href="{{ url('/pokemon/' . $pokeName) }}" class="btn w-100 btn-poke">
                                 VER INFO
@@ -53,7 +61,7 @@
             @empty
                 @if(!isset($errorApi))
                     <div class="col-12 text-center py-5">
-                        <h3 class="text-muted">No se encontró ningún Pokémon.</h3>
+                        <h3 class="text-muted font-pixel">No se encontró ningún Pokémon.</h3>
                     </div>
                 @endif
             @endforelse
