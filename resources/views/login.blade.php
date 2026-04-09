@@ -7,7 +7,10 @@
     
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}">
 </head>
-<body>
+<body class="pantalla-login">
+
+    <img src="{{ asset('images/pokemon1.gif') }}" class="poke-fondo-1" alt="Pokemon 1">
+    <img src="{{ asset('images/pokemon2.gif') }}" class="poke-fondo-2" alt="Pokemon 2">
 
     <div class="login-container">
         <h2>Iniciar Sesión</h2>
