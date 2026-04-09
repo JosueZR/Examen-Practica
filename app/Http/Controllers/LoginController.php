@@ -35,4 +35,15 @@ class LoginController extends Controller
             'email' => 'Las credenciales no son correctas.',
         ]);
     }
+    
+    // Función para cerrar sesión
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect('/mi-login');
+    }
 }

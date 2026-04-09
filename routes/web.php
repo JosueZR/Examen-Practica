@@ -10,6 +10,8 @@ use App\Http\Controllers\PokemonController; // Lo usaremos pronto
 // ---------------------------------------------------
 Route::get('/mi-login', [LoginController::class, 'index'])->name('login');
 Route::post('/mi-login', [LoginController::class, 'authenticate']);
+Route::get('/registro', [RegisterController::class, 'index']);
+Route::post('/registro', [RegisterController::class, 'store']);
 
 // ---------------------------------------------------
 // RUTA DEL HOME (Protegida)
@@ -29,4 +31,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });

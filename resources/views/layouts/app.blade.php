@@ -20,6 +20,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" href="{{ url('/pokemon') }}">Pokémon (Listado)</a>
                         </li>
+                        <li class="nav-item">
+                            <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-link nav-link text-white fw-bold">Cerrar Sesión</button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </div>
