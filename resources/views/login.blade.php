@@ -26,6 +26,10 @@
             </div>
 
             <button type="submit" class="btn-entrar">Entrar</button>
+            
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="/registro" style="color: white; text-decoration: none; font-size: 0.9em;">¿No tienes cuenta? Regístrate aquí</a>
+            </div>
 
             @error('email')
                 <p class="error-msg">{{ $message }}</p>

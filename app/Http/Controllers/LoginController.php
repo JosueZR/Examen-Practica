@@ -27,12 +27,23 @@ class LoginController extends Controller
             $request->session()->regenerate();
             
             // Si todo está bien, lo mandamos a una página de bienvenida
-            return redirect()->intended('dashboard'); 
+            return redirect()->intended('/'); 
         }
 
         // 3. Si se equivoca de contraseña o correo, lo regresamos con un error
         return back()->withErrors([
             'email' => 'Las credenciales no son correctas.',
         ]);
+    }
+    
+    // Función para cerrar sesión
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect('/mi-login');
     }
 }
