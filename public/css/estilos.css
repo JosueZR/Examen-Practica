@@ -11,7 +11,7 @@
     font-family: 'Quicksand', sans-serif;
 }
 
-body {
+.pantalla-login {
     /* Fondo que recuerda a un cielo con nubes/campo de batalla */
     background: linear-gradient(135deg, #f05053 0%, #a02022 100%);
     display: flex;
@@ -165,46 +165,161 @@ body {
     position: relative; /* Necesario para que z-index funcione */
 }
 
-/* --- 3. Creamos los Pokémon "Fantasma" --- */
+/* --- 3. Imágenes de Pokémon de Fondo --- */
 
-/* --- 3. Creamos los Pokémon "Fantasma" --- */
-
-body::before {
-    content: ''; 
-    position: absolute;
-    background-image: url('../images/pokemon1.gif'); 
-    background-size: contain;
-    background-repeat: no-repeat;
-    
-    /* ¡Aquí aumentamos el tamaño al doble! */
-    width: 350px;  /* Antes estaba en 150px */
-    height: 350px; 
-    
-    /* Lo empujamos bien a la orilla izquierda para que no tape */
+.poke-fondo-1 {
+    position: fixed; 
+    width: 350px;
+    height: auto; /* Para mantener la proporción del GIF */
     top: 20%; 
     left: 2%; 
-    
-    opacity: 0.8; /* Un poco más de opacidad para que se vea claro */
+    opacity: 0.8;
     z-index: 1; 
     animation: floatPokemon 5s ease-in-out infinite;
+    pointer-events: none; /* Hace que los clics traspasen la imagen */
 }
 
-body::after {
-    content: '';
-    position: absolute;
-    background-image: url('../images/pokemon2.gif'); 
-    background-size: contain;
-    background-repeat: no-repeat;
-    
-    /* ¡Tamaño gigante para el Pokémon de fuego! */
-    width: 450px;  /* Antes estaba en 200px */
-    height: 450px; 
-    
-    /* Lo pegamos a la esquina inferior derecha */
+.poke-fondo-2 {
+    position: fixed; 
+    width: 450px;
+    height: auto; 
     bottom: 5%; 
-    right: -10%; 
-    
+    right: 2%; 
     opacity: 0.9; 
     z-index: 1; 
     animation: floatFirePokemon 6s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* --- 4. Animaciones de Movimiento (Faltaban estos fotogramas) --- */
+@keyframes floatPokemon {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); } /* Sube 20 pixeles */
+    100% { transform: translateY(0px); }
+}
+
+@keyframes floatFirePokemon {
+    0% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-15px) scale(1.02); } /* Sube y 'respira' un poco */
+    100% { transform: translateY(0px) scale(1); }
+}
+
+/* =========================================
+   TEMA GLOBAL DEL DASHBOARD (POKÉDEX)
+========================================= */
+
+/* Hacemos que todos los textos usen la fuente limpia Quicksand */
+body {
+    font-family: 'Quicksand', sans-serif;
+}
+
+/* Aplicamos la fuente pixelada a títulos grandes para dar el toque retro */
+h1, .display-4, .display-5 {
+    font-family: 'Press Start 2P', cursive !important;
+    font-size: 1.8rem !important; /* Reducimos un poco para que no rompa el diseño */
+    color: #333333;
+    line-height: 1.5;
+}
+
+/* --- ESTILOS DEL NAVBAR (LA CARCASA SUPERIOR) --- */
+.pokedex-header {
+    background-color: #dc0a2d; /* Rojo clásico */
+    border-bottom: 8px solid #333333; /* Borde grueso retro */
+    padding: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.pokedex-header .navbar-brand {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 22px;
+    color: #ffcb05 !important; /* Amarillo Pokémon */
+    text-shadow: 3px 3px #333333; /* Sombra dura */
+    letter-spacing: 2px;
+}
+
+/* --- LAS LUCES DE LA POKÉDEX --- */
+.pokedex-lights {
+    display: flex;
+    align-items: center; /* Cambiamos flex-start por center */
+    gap: 8px;
+    margin-right: 20px; /* Un poco de respiro antes del título */
+}
+
+.light-big-blue {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #85e8ff, #2caadd);
+    border: 4px solid #ffffff;
+    box-shadow: 0 0 10px rgba(44, 170, 221, 0.8), 0 0 0 4px #333333; /* Aro blanco y borde oscuro */
+}
+
+.light-small {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #333333;
+    box-shadow: inset -3px -3px 5px rgba(0,0,0,0.4), 0 0 5px rgba(0,0,0,0.5); /* Efecto 3D */
+}
+
+.light-small.red { background: radial-gradient(circle at 30% 30%, #ff8888, #ff0000); }
+.light-small.yellow { background: radial-gradient(circle at 30% 30%, #ffee88, #ffcb05); }
+.light-small.green { background: radial-gradient(circle at 30% 30%, #88ff88, #3dc061); }
+
+/* Clase auxiliar para forzar la fuente retro donde la necesites */
+.font-pixel {
+    font-family: 'Press Start 2P', cursive !important;
+}
+
+/* =========================================
+   TARJETAS DEL CATÁLOGO (Efecto 3D y Hover)
+========================================= */
+
+.poke-card {
+    /* Efecto cristal / semitransparente */
+    background: rgba(255, 255, 255, 0.85); 
+    backdrop-filter: blur(8px); 
+    
+    /* Borde retro y esquinas muy redondas */
+    border: 4px solid #333333 !important; 
+    border-radius: 20px !important; 
+    
+    /* Sombra dura estilo dibujo/3D */
+    box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.15); 
+    
+    transition: all 0.3s ease; /* Movimiento suave */
+    overflow: hidden; /* Para que nada se salga del borde */
+}
+
+/* Lo que pasa cuando pasas el mouse sobre la tarjeta */
+.poke-card:hover {
+    transform: translateY(-10px) scale(1.02); /* Se levanta y acerca */
+    box-shadow: 12px 12px 0px rgba(220, 10, 45, 0.3); /* Sombra crece y se hace roja */
+    border-color: #dc0a2d !important; /* El borde cambia a rojo Pokédex */
+}
+
+/* Animación del GIF del Pokémon */
+.poke-card img {
+    transition: all 0.3s ease;
+}
+
+.poke-card:hover img {
+    transform: scale(1.15) rotate(3deg); /* El Pokémon hace un pequeño salto/acercamiento */
+}
+
+/* Botón personalizado de la tarjeta */
+.btn-poke {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px !important;
+    background-color: #333333;
+    color: #ffffff;
+    border: 4px solid #333333;
+    border-radius: 50px;
+    padding: 10px;
+    transition: all 0.2s ease;
+}
+
+.btn-poke:hover {
+    background-color: #ffcb05; /* Se pinta de amarillo */
+    color: #333333;
 }

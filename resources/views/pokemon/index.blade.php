@@ -35,16 +35,17 @@
                 @php $pokeName = strtolower($pokemon['name']); @endphp
                 
                 <div class="col">
-                    <div class="card h-100 shadow-sm border-0 text-center">
+                    <div class="card h-100 text-center poke-card">
                         <div class="p-4 d-flex justify-content-center align-items-center" style="height: 150px;">
                             <img src="https://img.pokemondb.net/sprites/black-white/anim/normal/{{ $pokeName }}.gif" 
                                  alt="{{ $pokeName }}" style="max-height: 80px; object-fit: contain;">
                         </div>
                         
-                        <div class="card-body bg-light rounded-bottom">
-                            <h5 class="card-title text-capitalize fw-bold mb-3">{{ $pokeName }}</h5>
-                            <a href="{{ url('/pokemon/' . $pokeName) }}" class="btn btn-outline-danger w-100 rounded-pill">
-                                Ver Detalle
+                        <div class="card-body bg-light rounded-bottom d-flex flex-column justify-content-between">
+                            <h5 class="card-title text-capitalize fw-bold mb-4 font-pixel" style="font-size: 14px;">{{ $pokeName }}</h5>
+                            
+                            <a href="{{ url('/pokemon/' . $pokeName) }}" class="btn w-100 btn-poke">
+                                VER INFO
                             </a>
                         </div>
                     </div>

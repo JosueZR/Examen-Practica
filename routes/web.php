@@ -3,7 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LoginController; 
-use App\Http\Controllers\PokemonController; // Lo usaremos pronto
+use App\Http\Controllers\PokemonController; 
+use App\Http\Controllers\RegisterController;
 
 // ---------------------------------------------------
 // RUTAS DEL LOGIN (Se quedan igual)
