@@ -3,12 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http; 
-use App\Models\PokemonCapturado; // <-- Nuestro nuevo modelo local
+// Agregamos tus dos nuevos servicios aquí arriba:
+use App\Services\PokeApiService;
+use App\Services\PokemonMapper;
+use App\Models\PokemonCapturado; 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class PokemonController extends Controller
 {
+    // 1. Declaramos las propiedades para los servicios
+    protected $pokeApi;
+    protected $mapper;
+
+    // 2. Inyectamos los servicios en el constructor
+    public function __construct(PokeApiService $pokeApi, PokemonMapper $mapper)
+    {
+        $this->pokeApi = $pokeApi;
+        $this->mapper = $mapper;
+    }
+
     public function index(Request $request)
     {
         $pokemons = [];
@@ -18,31 +32,34 @@ class PokemonController extends Controller
             if ($request->has('search')) {
                 
                 // 1. Usamos el Validador Manual para evitar el bug de redirección
-                $validador = \Illuminate\Support\Facades\Validator::make($request->all(), [
+                $validador = Validator::make($request->all(), [
                     'search' => 'required'
                 ], [
                     'search.required' => 'El campo de búsqueda no puede estar vacío.'
                 ]);
 
-                // 2. Si falla la validación, cargamos la vista normal pero inyectando el error rojo
+                // 2. Si falla la validación
                 if ($validador->fails()) {
-                    $response = Http::timeout(3)->get('https://pokeapi.co/api/v2/pokemon?limit=20');
-                    if ($response->successful()) {
-                        $pokemons = $response->json()['results'];
+                    // Usamos el servicio en lugar de Http::get
+                    $data = $this->pokeApi->getList(20);
+                    if ($data) {
+                        $pokemons = $data['results'];
                     }
-                    // Mandamos los errores directo a la vista
                     return view('pokemon.index', compact('pokemons', 'errorApi'))->withErrors($validador);
                 }
 
                 // 3. Si sí escribió algo, hacemos el filtro de búsqueda
                 $searchTerm = strtolower(trim($request->search));
-                $response = Http::timeout(3)->get('https://pokeapi.co/api/v2/pokemon?limit=1000');
+                
+                // Usamos el servicio pidiendo 1000
+                $data = $this->pokeApi->getList(1000);
 
-                if ($response->successful()) {
-                    $todos = $response->json()['results'];
+                if ($data) {
+                    $todos = $data['results'];
                     $resultados = array_filter($todos, function($poke) use ($searchTerm) {
                         return str_contains(strtolower($poke['name']), $searchTerm);
                     });
+                    
                     if (count($resultados) > 0) {
                         $pokemons = array_slice($resultados, 0, 20);
                     } else {
@@ -51,9 +68,9 @@ class PokemonController extends Controller
                 }
             } else {
                 // 4. Si entra sin buscar (carga inicial)
-                $response = Http::timeout(3)->get('https://pokeapi.co/api/v2/pokemon?limit=20');
-                if ($response->successful()) {
-                    $pokemons = $response->json()['results'];
+                $data = $this->pokeApi->getList(20);
+                if ($data) {
+                    $pokemons = $data['results'];
                 }
             }
         } catch (\Exception $e) {
@@ -66,9 +83,12 @@ class PokemonController extends Controller
     public function show($name)
     {
         try {
-            $response = Http::timeout(3)->get("https://pokeapi.co/api/v2/pokemon/" . strtolower($name));
-            if ($response->successful()) {
-                $pokemon = $response->json();
+            // 1. Pedimos los datos al Servicio
+            $rawData = $this->pokeApi->getPokemon(strtolower($name));
+            
+            if ($rawData) {
+                // 2. Usamos el Mapper para limpiar la data
+                $pokemon = $this->mapper->map($rawData);
                 
                 // Revisamos si ya lo tenemos guardado en nuestra base de datos local
                 $yaCapturado = PokemonCapturado::where('user_id', Auth::id())
@@ -80,10 +100,11 @@ class PokemonController extends Controller
         } catch (\Exception $e) {
             return view('pokemon.error', ['name' => $name]);
         }
+        
         return view('pokemon.error', ['name' => $name]);
     }
 
-    // --- NUEVAS FUNCIONES PARA LA BASE DE DATOS LOCAL ---
+    // --- FUNCIONES PARA LA BASE DE DATOS LOCAL (Se quedan igualitas) ---
 
     public function guardarLocal(Request $request)
     {
@@ -104,32 +125,22 @@ class PokemonController extends Controller
 
     public function verEquipo()
     {
-        // Leemos de SQLite (Esto funcionará aunque no haya internet)
         $pokemonsLocales = PokemonCapturado::where('user_id', Auth::id())->get();
         return view('pokemon.equipo', compact('pokemonsLocales'));
     }
 
     public function showLocal($id)
     {
-        // Buscamos el pokemon en la BD local asegurándonos que sea del usuario actual
         $pokemon = PokemonCapturado::where('user_id', Auth::id())->findOrFail($id);
-        
         return view('pokemon.equipo_show', compact('pokemon'));
     }
 
     public function eliminarLocal($id)
     {
-        // 1. Buscamos al Pokémon asegurándonos que sea del usuario actual
         $pokemon = PokemonCapturado::where('user_id', Auth::id())->findOrFail($id);
-        
-        // 2. Guardamos el nombre para mostrarlo en el mensaje de éxito
         $nombre = strtoupper($pokemon->nombre);
-        
-        // 3. Lo eliminamos de la base de datos
         $pokemon->delete();
 
-        // 4. Redirigimos a Mi Equipo con un mensaje
         return redirect('/mi-equipo')->with('success', "¡$nombre ha sido liberado de tu equipo!");
     }
 }
-    

@@ -25,14 +25,14 @@
                     </div>
 
                     <div class="p-4 d-flex justify-content-center align-items-center" style="background: radial-gradient(circle, #f8f9fa 0%, #e9ecef 100%); height: 300px;">
-                        <img src="{{ $pokemon['sprites']['other']['official-artwork']['front_default'] }}" 
-                             alt="{{ $pokemon['name'] }}" class="img-fluid" 
-                             style="max-height: 250px; filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.3)); transition: transform 0.3s;"
-                             onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">
+                        <img src="{{ $pokemon['image'] }}" 
+                            alt="{{ $pokemon['name'] }}" class="img-fluid" 
+                            style="max-height: 250px; filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.3)); transition: transform 0.3s;"
+                            onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">
                     </div>
                     
                     <div class="bg-dark text-center py-2 border-bottom border-dark">
-                        <audio id="poke-cry" src="{{ $pokemon['cries']['latest'] }}"></audio>
+                        <audio id="poke-cry" src="{{ $pokemon['cry'] }}"></audio>
                         <button type="button" onclick="document.getElementById('poke-cry').play()" class="btn btn-warning font-pixel rounded-pill border border-dark shadow-sm" style="font-size: 10px;">
                             🔊 REPRODUCIR SONIDO
                         </button>
@@ -50,15 +50,14 @@
                             <form id="capture-form" action="{{ url('/pokemon/guardar') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="nombre" value="{{ $pokemon['name'] }}">
-                                <input type="hidden" name="imagen_url" value="{{ $pokemon['sprites']['other']['official-artwork']['front_default'] }}">
-                                @foreach($pokemon['stats'] as $stat)
-                                    @if(in_array($stat['stat']['name'], ['hp', 'attack', 'defense']))
-                                        <input type="hidden" name="{{ $stat['stat']['name'] }}" value="{{ $stat['base_stat'] }}">
-                                    @endif
-                                @endforeach
-                                <input type="hidden" name="tipos" value="{{ implode(', ', array_column(array_column($pokemon['types'], 'type'), 'name')) }}">
-                                <input type="hidden" name="sonido_url" value="{{ $pokemon['cries']['latest'] }}">
-                                <button type="button" onclick="lanzarPokebolaYCapturar()" class="btn btn-danger font-pixel rounded-pill border border-dark shadow-sm" style="font-size: 11px;">
+                                <input type="hidden" name="imagen_url" value="{{ $pokemon['image'] }}">
+                                <input type="hidden" name="hp" value="{{ $pokemon['hp'] }}">
+                                <input type="hidden" name="attack" value="{{ $pokemon['attack'] }}">
+                                <input type="hidden" name="defense" value="{{ $pokemon['defense'] }}">
+                                <input type="hidden" name="tipos" value="{{ implode(', ', $pokemon['types']) }}">
+                                <input type="hidden" name="sonido_url" value="{{ $pokemon['cry'] }}">
+                                
+                                <button type="button" onclick="lanzarPokebolaYCapturar()" class="btn btn-danger font-pixel rounded-pill border-dark">
                                     🔴 CAPTURAR (GUARDAR)
                                 </button>
                             </form>
@@ -72,9 +71,10 @@
                                     'normal' => '#A8A77A', 'fire' => '#EE8130', 'water' => '#6390F0', 'electric' => '#F7D02C', 'grass' => '#7AC74C', 'ice' => '#96D9D6', 'fighting' => '#C22E28', 'poison' => '#A33EA1', 'ground' => '#E2BF65', 'flying' => '#A98FF3', 'psychic' => '#F95587', 'bug' => '#A6B91A', 'rock' => '#B6A136', 'ghost' => '#735797', 'dragon' => '#6F35FC', 'dark' => '#705746', 'steel' => '#B7B7CE', 'fairy' => '#D685AD'
                                 ];
                             @endphp
+                            
                             @foreach($pokemon['types'] as $type)
-                                <span class="badge rounded-pill px-4 py-2 text-capitalize text-white shadow-sm mx-1 font-pixel" style="font-size: 10px; background-color: {{ $coloresTipos[$type['type']['name']] ?? '#777' }}; border: 2px solid rgba(0,0,0,0.2);">
-                                    {{ $type['type']['name'] }}
+                                <span class="badge rounded-pill px-4 py-2 text-capitalize text-white shadow-sm mx-1 font-pixel" style="background-color: {{ $coloresTipos[$type] ?? '#777' }}; font-size: 12px;">
+                                    {{ $type }}
                                 </span>
                             @endforeach
                         </div>
@@ -83,23 +83,36 @@
 
                         <div class="mb-2">
                             <h5 class="fw-bold text-muted mb-4 font-pixel text-center" style="font-size: 14px;">ESTADÍSTICAS</h5>
-                            @foreach($pokemon['stats'] as $stat)
-                                @if(in_array($stat['stat']['name'], ['hp', 'attack', 'defense']))
-                                    @php
-                                        $porcentaje = min(($stat['base_stat'] / 150) * 100, 100); 
-                                        $colorBarra = 'bg-success'; 
-                                        if($stat['stat']['name'] == 'attack') $colorBarra = 'bg-danger';
-                                        if($stat['stat']['name'] == 'defense') $colorBarra = 'bg-info'; 
-                                    @endphp
-                                    <div class="d-flex align-items-center mb-3">
-                                        <span class="text-uppercase fw-bold text-secondary font-pixel text-end me-2" style="width: 75px; font-size: 8px;">{{ $stat['stat']['name'] }}</span>
-                                        <span class="fw-bold text-dark font-pixel text-center me-2" style="width: 35px; font-size: 10px;">{{ str_pad($stat['base_stat'], 3, '0', STR_PAD_LEFT) }}</span>
-                                        <div class="progress flex-grow-1 border border-dark bg-light shadow-inner" style="height: 18px; border-radius: 10px;">
-                                            <div class="progress-bar progress-bar-striped progress-bar-animated {{ $colorBarra }}" role="progressbar" style="width: {{ $porcentaje }}%"></div>
-                                        </div>
-                                    </div>
-                                @endif
-                            @endforeach
+                            
+                            <!-- HP -->
+                            @php $porcentajeHp = min(($pokemon['hp'] / 150) * 100, 100); @endphp
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="text-uppercase fw-bold text-secondary font-pixel text-end me-2" style="width: 75px; font-size: 10px;">HP</span>
+                                <span class="fw-bold text-dark font-pixel text-center me-2" style="width: 35px; font-size: 10px;">{{ $pokemon['hp'] }}</span>
+                                <div class="progress flex-grow-1 border border-dark bg-light shadow-inner" style="height: 18px; border-radius: 4px;">
+                                    <div class="progress-bar bg-success" style="width: {{ $porcentajeHp }}%"></div>
+                                </div>
+                            </div>
+
+                            <!-- ATTACK -->
+                            @php $porcentajeAtk = min(($pokemon['attack'] / 150) * 100, 100); @endphp
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="text-uppercase fw-bold text-secondary font-pixel text-end me-2" style="width: 75px; font-size: 10px;">ATTACK</span>
+                                <span class="fw-bold text-dark font-pixel text-center me-2" style="width: 35px; font-size: 10px;">{{ $pokemon['attack'] }}</span>
+                                <div class="progress flex-grow-1 border border-dark bg-light shadow-inner" style="height: 18px; border-radius: 4px;">
+                                    <div class="progress-bar bg-danger" style="width: {{ $porcentajeAtk }}%"></div>
+                                </div>
+                            </div>
+
+                            <!-- DEFENSE -->
+                            @php $porcentajeDef = min(($pokemon['defense'] / 150) * 100, 100); @endphp
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="text-uppercase fw-bold text-secondary font-pixel text-end me-2" style="width: 75px; font-size: 10px;">DEFENSE</span>
+                                <span class="fw-bold text-dark font-pixel text-center me-2" style="width: 35px; font-size: 10px;">{{ $pokemon['defense'] }}</span>
+                                <div class="progress flex-grow-1 border border-dark bg-light shadow-inner" style="height: 18px; border-radius: 4px;">
+                                    <div class="progress-bar bg-info" style="width: {{ $porcentajeDef }}%"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
