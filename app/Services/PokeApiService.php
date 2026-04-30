@@ -3,39 +3,35 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class PokeApiService
 {
-    protected string $baseUrl = 'https://pokeapi.co/api/v2';
-
-    /**
-     * Obtiene el listado de Pokémon.
-     */
-    public function getList(int $limit = 20, int $offset = 0): ?array
+    // Función auxiliar para generar la llave del caché
+    public function getCacheKey($name)
     {
-        $response = Http::get("{$this->baseUrl}/pokemon", [
-            'limit' => $limit,
-            'offset' => $offset,
-        ]);
-
-        if ($response->successful()) {
-            return $response->json();
-        }
-
-        return null;
+        return "pokemon_detail_" . strtolower($name);
     }
 
-    /**
-     * Obtiene los detalles de un Pokémon específico por nombre o ID.
-     */
-    public function getPokemon(string $nameOrId): ?array
+    public function getPokemon($name)
     {
-        $response = Http::get("{$this->baseUrl}/pokemon/{$nameOrId}");
+        $key = $this->getCacheKey($name);
 
-        if ($response->successful()) {
-            return $response->json();
-        }
+        // Si existe en caché, lo devuelve. Si no, hace la petición y lo guarda por 300 segundos (5 min)
+        return Cache::remember($key, 300, function () use ($name) {
+            $response = Http::get("https://pokeapi.co/api/v2/pokemon/{$name}");
+            
+            if ($response->successful()) {
+                return $response->json();
+            }
 
-        return null;
+            return null;
+        });
+    }
+
+    public function getList($limit = 20)
+    {
+        $response = Http::get("https://pokeapi.co/api/v2/pokemon?limit={$limit}");
+        return $response->successful() ? $response->json() : null;
     }
 }

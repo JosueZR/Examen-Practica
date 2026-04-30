@@ -38,7 +38,7 @@
                             <a class="nav-link text-white fw-bold" href="{{ url('/pokemon') }}">Catálogo</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-warning fw-bold font-pixel" style="font-size: 12px;" href="{{ url('/mi-equipo') }}">MI EQUIPO (BD)</a>
+                            <a class="nav-link text-white fw-bold font-pixel" style="font-size: 10px;" href="{{ url('/mi-equipo') }}">MI EQUIPO</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white fw-bold" href="{{ url('/about') }}">Acerca de</a>
