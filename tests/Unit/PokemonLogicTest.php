@@ -6,6 +6,7 @@ use Tests\TestCase; // <-- ¡Asegúrate de que sea este TestCase y no el de PHPU
 use App\Services\PokemonMapper;
 use App\Services\PokeApiService;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class PokemonLogicTest extends TestCase
 {
@@ -148,5 +149,28 @@ class PokemonLogicTest extends TestCase
 
         // Según nuestra lógica del servicio, si no es exitoso (ej. 404), devuelve null
         $this->assertNull($result);
+    }
+
+    // Autor: Robledo
+    public function test_cacheKey_genera_clave_correcta()
+    {
+        $service = new PokeApiService();
+        $key = $service->getCacheKey('Pikachu');
+        
+        $this->assertEquals('pokemon_detail_pikachu', $key);
+    }
+
+    // Autor: Cruz
+    public function test_si_hay_cache_devuelve_datos_cacheados()
+    {
+        $service = new PokeApiService();
+        $fakeData = ['name' => 'cache-mon', 'id' => 1];
+        
+        // Forzamos datos en el caché
+        Cache::put('pokemon_detail_pikachu', $fakeData, 300);
+        
+        $result = $service->getPokemon('pikachu');
+        
+        $this->assertEquals('cache-mon', $result['name']);
     }
 }
